@@ -36,7 +36,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000', // ✅ Update if your backend runs on a different port
+        target: 'https://e-commerce-server-z1c3.onrender.com', 
         changeOrigin: true,
         secure: false,
       },

@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import AuthLayout from "./components/auth/layout";
 import AuthLogin from "./pages/auth/login";
 import AuthRegister from "./pages/auth/register";
@@ -27,7 +27,7 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import Wishlist from "./pages/shopping-view/wishlist";
 
-// ✅ Toastify
+
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -48,7 +48,13 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<CheckAuth isAuthenticated={isAuthenticated} user={user} />}
+          element={
+            isAuthenticated ? (
+              <Navigate to="/shop/home" />
+            ) : (
+              <Navigate to="/auth/login" />
+            )
+          }
         />
         <Route
           path="/auth"

@@ -8,7 +8,7 @@ export function cn(...inputs) {
 
 // --- Wishlist Utilities ---
 
-import axiosInstance from "@/config/index";
+import axiosInstance from "../config/index";
 export const fetchWishlist = async () => {
   const res = await axiosInstance.get("/wishlist");
   return res.data;
@@ -22,3 +22,5 @@ export const addToWishlist = async (productId) => {
 export const removeFromWishlist = async (productId) => {
   await axiosInstance.delete(`/wishlist/${productId}`);
 };
+
+

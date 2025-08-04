@@ -36,7 +36,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://e-commerce-server-z1c3.onrender.com', 
+        target: 'http://localhost:5000', 
         changeOrigin: true,
         secure: false,
       },

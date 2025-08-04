@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import AuthLayout from "./components/auth/layout";
 import AuthLogin from "./pages/auth/login";
 import AuthRegister from "./pages/auth/register";
@@ -48,13 +48,7 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/shop/home" />
-            ) : (
-              <Navigate to="/auth/login" />
-            )
-          }
+          element={<CheckAuth isAuthenticated={isAuthenticated} user={user} />}
         />
         <Route
           path="/auth"

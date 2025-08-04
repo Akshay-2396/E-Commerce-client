@@ -12,7 +12,7 @@ const initialState = {
 export const fetchAllProducts = createAsyncThunk(
   "products/fetchAllProducts",
   async () => {
-    const response = await axios.get("http://localhost:5000/api/shop/products/all");
+    const response = await axios.get("https://e-commerce-server-z1c3.onrender.com/api/shop/products/all");
     return response.data;
   }
 );
@@ -27,7 +27,7 @@ export const fetchAllFilteredProducts = createAsyncThunk(
     });
 
     const result = await axios.get(
-      `http://localhost:5000/api/shop/products/get?${query}`
+      `https://e-commerce-server-z1c3.onrender.com/api/shop/products/get?${query}`
     );
 
     return result.data;
@@ -38,7 +38,7 @@ export const fetchAllFilteredProducts = createAsyncThunk(
 export const fetchProductDetails = createAsyncThunk(
   "products/fetchProductDetails",
   async (id) => {
-    const result = await axios.get(`http://localhost:5000/api/shop/products/get/${id}`);
+    const result = await axios.get(`https://e-commerce-server-z1c3.onrender.com/api/shop/products/get/${id}`);
     return result.data;
   }
 );

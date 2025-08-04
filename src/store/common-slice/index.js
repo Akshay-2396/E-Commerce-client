@@ -11,7 +11,7 @@ export const getFeatureImages = createAsyncThunk(
   "/order/getFeatureImages",
   async () => {
     const response = await axios.get(
-      `http://localhost:5000/api/common/feature/get`
+      `https://e-commerce-server-z1c3.onrender.com/api/common/feature/get`
     );
 
     return response.data;
@@ -26,7 +26,7 @@ export const addFeatureImage = createAsyncThunk(
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/common/feature", {
+      const response = await axios.post("https://e-commerce-server-z1c3.onrender.com/api/common/feature", {
         image: uploadedImageUrl,
       });
 

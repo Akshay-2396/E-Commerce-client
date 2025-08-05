@@ -242,10 +242,31 @@ export const addressFormControls = [
 // export default axiosInstance;
 
 
+// import axios from "axios";
+
+// const axiosInstance = axios.create({
+//   baseURL: import.meta.env.VITE_BACKEND_URL ,
+//   withCredentials: true,
+// });
+
+// axiosInstance.interceptors.request.use((config) => {
+//   const token = localStorage.getItem("token");
+//   if (token) {
+//     config.headers.Authorization = `Bearer ${token}`;
+//   }
+//   return config;
+// });
+
+// export default axiosInstance;
+
 import axios from "axios";
 
+const isLocalhost = window.location.hostname === "localhost";
+
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_URL ,
+  baseURL: isLocalhost
+    ? "http://localhost:5000/api"
+    : "https://e-commerce-server-1-vca8.onrender.com/shop",
   withCredentials: true,
 });
 

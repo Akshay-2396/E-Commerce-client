@@ -182,6 +182,15 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+// export const loginUser = createAsyncThunk("auth/loginUser", async (data) => {
+//   const res = await axios.post("/auth/login", data);
+//   const token = res.data.token;
+//   if (token) {
+//     localStorage.setItem("token", token); // ✅ Save it
+//   }
+//   return res.data;
+// });
+
 // Logout user
 export const logoutUser = createAsyncThunk(
   "/auth/logout",

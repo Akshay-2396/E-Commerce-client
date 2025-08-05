@@ -223,39 +223,22 @@ export const addressFormControls = [
   },
 ];
 
-// import axios from "axios";
+import axios from "axios";
 
-// const axiosInstance = axios.create({
-//   baseURL: "http://localhost:5000/api",
-//   withCredentials: true,
-// });
+const axiosInstance = axios.create({
+  baseURL: "http://localhost:5000/api",
+  withCredentials: true,
+});
 
-// axiosInstance.interceptors.request.use((config) => {
-//   const token = localStorage.getItem("token");
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
+axiosInstance.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
-// export default axiosInstance;
+export default axiosInstance;
 
 
-import axiosInstance from "../config/index";
-
-// Fetch wishlist
-export const fetchWishlist = async () => {
-  const res = await axiosInstance.get("/wishlist");
-  return res.data;
-};
-
-// Add product to wishlist
-export const addToWishlist = async (productId) => {
-  const res = await axiosInstance.post("/wishlist", { _id: productId });
-  return res.data.wishlist;
-};
-
-// Remove product from wishlist
-export const removeFromWishlist = async (productId) => {
-  await axiosInstance.delete(`/wishlist/${productId}`);
-};
+// export const API_BASE_URL = "http://localhost:5000/api";

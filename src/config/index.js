@@ -266,7 +266,7 @@ const isLocalhost = window.location.hostname === "localhost";
 const axiosInstance = axios.create({
   baseURL: isLocalhost
     ? "http://localhost:5000/api"
-    : "https://e-commerce-server-1-vca8.onrender.com/shop",
+    : "https://e-commerce-server-1-vca8.onrender.com/api",
   withCredentials: true,
 });
 

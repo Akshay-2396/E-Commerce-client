@@ -98,23 +98,12 @@ function ShoppingOrderDetailsView({ orderDetails }) {
                 </div>
                 <div className="flex justify-between text-sm text-gray-500">
                   <span>Shipping:</span>
-                  <span>$0.00</span>
+                  <span>${orderDetails?.shippingCost?.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-sm text-gray-500 mb-2">
-                  <span>Tax:</span>
-                  <span>$0.00</span>
-                </div>
+
                 <div className="border-t pt-2 mt-2 flex justify-between font-bold text-lg">
                   <span>Total:</span>
-                  <span>
-                    $
-                    {orderDetails?.cartItems
-                      ?.reduce(
-                        (acc, item) => acc + item.quantity * item.price,
-                        0
-                      )
-                      .toFixed(2)}
-                  </span>
+                  <span>${orderDetails?.totalAmount?.toFixed(2)}</span>
                 </div>
               </div>
             </div>

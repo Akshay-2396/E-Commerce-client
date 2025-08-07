@@ -20,7 +20,7 @@ const Profile = () => {
         const response = await axiosInstance.get("/user/profile");
         console.log("Fetched user:", response.data);
 
-        // ✅ Map backend's userName to frontend's name
+        
         setUser({
           name: response.data.userName,
           email: response.data.email,
@@ -46,7 +46,7 @@ const Profile = () => {
   // Handle profile update
   const handleUpdate = async () => {
     try {
-      // ✅ Map frontend's name to backend's expected userName
+      //  Map frontend's name to backend's expected userName
       const response = await axiosInstance.put("/user/profile", {
         userName: user.name,
         email: user.email,

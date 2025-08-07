@@ -15,7 +15,7 @@ const ResetPassword = () => {
 
     try {
       const res = await axios.post(
-        `http://localhost:5000/api/auth/reset-password/${id}/${token}`,
+        `https://e-commerce-server-1-vca8.onrender.com/api/auth/reset-password/${id}/${token}`,
         { password }
       );
       if (res.status === 200 || res.status === 201) {

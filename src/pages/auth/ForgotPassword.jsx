@@ -11,7 +11,7 @@ const ForgotPassword = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/auth/forgot-password",
+        "https://e-commerce-server-1-vca8.onrender.com/api/auth/forgot-password",
         {
           email,
         }

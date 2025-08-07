@@ -34,7 +34,7 @@ export const loginUser = createAsyncThunk(
       }
     );
 
-    // ✅ Save token in localStorage
+    //  Save token in localStorage
     if (response.data.token) {
       localStorage.setItem("token", response.data.token);
     }
@@ -57,7 +57,7 @@ export const logoutUser = createAsyncThunk(
       }
     );
 
-    // ✅ Clear token from localStorage
+    //  Clear token from localStorage
     localStorage.removeItem("token");
 
     return response.data;

@@ -12,19 +12,19 @@ export const addReview = createAsyncThunk(
   async (formdata, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/shop/review/add`,
+        `https://e-commerce-server-1-vca8.onrender.com/api/shop/review/add`,
         formdata
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data); // <-- important!
+      return rejectWithValue(error.response.data); 
     }
   }
 );
 
 export const getReviews = createAsyncThunk("/order/getReviews", async (id) => {
   const response = await axios.get(
-    `http://localhost:5000/api/shop/review/${id}`
+    `https://e-commerce-server-1-vca8.onrender.com/api/shop/review/${id}`
   );
 
   return response.data;

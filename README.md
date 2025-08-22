@@ -42,6 +42,13 @@ A full-featured E-Commerce web application built using the *MERN stack, providin
 
 ### 3. 🧑‍💼 Seller(Admin) Features
 
+
+## ✅ To Login :
+Email : itsakshay.ak96@gmail.com
+
+Password : 987654321
+
+
 #### 📊 Seller(Admin) Dashboard
 - Add, update, delete products
 - View sales reports and manage orders

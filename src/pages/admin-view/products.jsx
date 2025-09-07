@@ -43,7 +43,7 @@ function AdminProducts() {
   const { productList } = useSelector((state) => state.adminProducts);
   const dispatch = useDispatch();
   const { toast } = useToast();
-
+  const email = sessionStorage.getItem("email");
   function onSubmit(event) {
     event.preventDefault();
 
@@ -51,7 +51,8 @@ function AdminProducts() {
       ? dispatch(
           editProduct({
             id: currentEditedId,
-            formData,
+            ...formData,
+            adminid: email,
           })
         ).then((data) => {
           console.log(data, "edit");
@@ -67,6 +68,7 @@ function AdminProducts() {
           addNewProduct({
             ...formData,
             image: uploadedImageUrl,
+            adminid: email,
           })
         ).then((data) => {
           if (data?.payload?.success) {

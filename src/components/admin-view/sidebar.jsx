@@ -12,19 +12,19 @@ const adminSidebarMenuItems = [
   {
     id: "dashboard",
     label: "Dashboard",
-    path: "/admin/dashboard",
+    path: "/seller/dashboard",
     icon: <LayoutDashboard />,
   },
   {
     id: "products",
     label: "Products",
-    path: "/admin/products",
+    path: "/seller/products",
     icon: <ShoppingBasket />,
   },
   {
     id: "orders",
     label: "Orders",
-    path: "/admin/orders",
+    path: "/seller/orders",
     icon: <BadgeCheck />,
   },
 ];
@@ -62,7 +62,7 @@ function AdminSideBar({ open, setOpen }) {
             <SheetHeader className="border-b">
               <SheetTitle className="flex gap-2 mt-5 mb-5">
                 <ChartNoAxesCombined size={30} />
-                <h1 className="text-2xl font-extrabold">Admin Panel</h1>
+                <h1 className="text-2xl font-extrabold">Seller Panel</h1>
               </SheetTitle>
             </SheetHeader>
             <MenuItems setOpen={setOpen} />
@@ -71,11 +71,11 @@ function AdminSideBar({ open, setOpen }) {
       </Sheet>
       <aside className="hidden w-64 flex-col border-r bg-background p-6 lg:flex">
         <div
-          onClick={() => navigate("/admin/dashboard")}
+          onClick={() => navigate("/seller/dashboard")}
           className="flex cursor-pointer items-center gap-2"
         >
           <ChartNoAxesCombined size={30} />
-          <h1 className="text-2xl font-extrabold">Admin Panel</h1>
+          <h1 className="text-2xl font-extrabold">Seller Panel</h1>
         </div>
         <MenuItems />
       </aside>

@@ -27,7 +27,6 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import Wishlist from "./pages/shopping-view/wishlist";
 
-
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -66,7 +65,7 @@ function App() {
         <Route path="/reset-password/:id/:token" element={<ResetPassword />} />
 
         <Route
-          path="/admin"
+          path="/seller"
           element={
             <CheckAuth isAuthenticated={isAuthenticated} user={user}>
               <AdminLayout />

@@ -9,8 +9,9 @@ const initialState = {
 export const getAllOrdersForAdmin = createAsyncThunk(
   "/order/getAllOrdersForAdmin",
   async () => {
+    const email = sessionStorage.getItem("email");
     const response = await axios.get(
-      `https://e-commerce-server-1-vca8.onrender.com/api/admin/orders/get`
+      `https://e-commerce-server-1-vca8.onrender.com/api/admin/orders/get?adminid=${email}`
     );
 
     return response.data;
@@ -20,8 +21,9 @@ export const getAllOrdersForAdmin = createAsyncThunk(
 export const getOrderDetailsForAdmin = createAsyncThunk(
   "/order/getOrderDetailsForAdmin",
   async (id) => {
+    const email = sessionStorage.getItem("email");
     const response = await axios.get(
-      `https://e-commerce-server-1-vca8.onrender.com/api/admin/orders/details/${id}`
+      `https://e-commerce-server-1-vca8.onrender.com/api/admin/orders/details/${id}/${email}`
     );
 
     return response.data;

@@ -21,9 +21,9 @@ function AuthLogin() {
 
     dispatch(loginUser(formData)).then((data) => {
       if (data?.payload?.success) {
-
-         localStorage.setItem("token", data.payload.token);
-
+        localStorage.setItem("token", data.payload.token);
+        sessionStorage.setItem("email", formData.email);
+        sessionStorage.setItem("role", data.payload.user.role);
         toast({
           title: data?.payload?.message,
         });

@@ -26,8 +26,9 @@ export const addNewProduct = createAsyncThunk(
 export const fetchAllProducts = createAsyncThunk(
   "/products/fetchAllProducts",
   async () => {
+    const email = sessionStorage.getItem("email");
     const result = await axios.get(
-      "https://e-commerce-server-1-vca8.onrender.com/api/admin/products/get"
+      `https://e-commerce-server-1-vca8.onrender.com/api/admin/products/get?adminid=${email}`
     );
 
     return result?.data;

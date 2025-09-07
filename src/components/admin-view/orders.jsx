@@ -92,7 +92,15 @@ function AdminOrdersView() {
                         ] || orderItem?.orderStatus}
                       </Badge>
                     </TableCell>
-                    <TableCell>${orderItem?.totalAmount}</TableCell>
+                    <TableCell>
+                      $
+                      {orderItem?.cartItems
+                        ?.reduce(
+                          (acc, item) => acc + item.quantity * item.price,
+                          0
+                        )
+                        .toFixed(2)}
+                    </TableCell>
                     <TableCell>
                       <Dialog
                         open={openDetailsDialog}

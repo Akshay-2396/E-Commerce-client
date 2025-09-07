@@ -10,8 +10,11 @@ const initialState = {
 export const getFeatureImages = createAsyncThunk(
   "/order/getFeatureImages",
   async () => {
+    const email = sessionStorage.getItem("email");
+    const role = sessionStorage.getItem("role");
+
     const response = await axios.get(
-      `https://e-commerce-server-1-vca8.onrender.com/api/common/feature/get`
+      `https://e-commerce-server-1-vca8.onrender.com/api/common/feature/get?adminid=${email}&role=${role}`
     );
 
     return response.data;
@@ -26,9 +29,13 @@ export const addFeatureImage = createAsyncThunk(
     }
 
     try {
-      const response = await axios.post("https://e-commerce-server-1-vca8.onrender.com/api/common/feature", {
-        image: uploadedImageUrl,
-      });
+      const response = await axios.post(
+        "https://e-commerce-server-1-vca8.onrender.com/api/common/feature",
+        {
+          image: uploadedImageUrl,
+          adminid: sessionStorage.getItem("email"),
+        }
+      );
 
       if (response.data?.success) {
         return response.data;

@@ -26,7 +26,7 @@ export const registerFormControls = [
     componentType: "select",
     options: [
       { id: "user", label: "User" },
-      { id: "admin", label: "Admin" },
+      { id: "admin", label: "Seller" },
      
     ],
   },

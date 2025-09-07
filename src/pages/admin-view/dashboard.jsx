@@ -33,7 +33,7 @@ function AdminDashboard() {
 
   function handleDeleteImage(id) {
     axios
-      .delete(`https://e-commerce-server-z1c3.onrender.com/api/common/feature/${id}`)
+      .delete(`https://e-commerce-server-1-vca8.onrender.com/api/common/feature/${id}`)
       .then((res) => {
         if (res.data.success) {
           dispatch(getFeatureImages());

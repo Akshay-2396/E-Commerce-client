@@ -149,4 +149,3 @@ function ShoppingProductTile({
 }
 
 export default ShoppingProductTile;
-

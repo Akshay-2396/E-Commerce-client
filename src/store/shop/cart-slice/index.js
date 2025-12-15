@@ -1,25 +1,25 @@
+
+
 import axios from "axios";
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
-  cartItems: [],
+  cartItems: {
+    items: [],
+    totalPrice: 0,
+  },
   isLoading: false,
 };
+
+/* -------------------- THUNKS -------------------- */
 
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
   async ({ userId, productId, quantity }) => {
-
     const response = await axios.post(
       "https://e-commerce-server-1-vca8.onrender.com/api/shop/cart/add",
-      {
-        userId,
-        productId,
-        quantity,
-      },
-   
+      { userId, productId, quantity }
     );
-
     return response.data;
   }
 );
@@ -30,7 +30,6 @@ export const fetchCartItems = createAsyncThunk(
     const response = await axios.get(
       `https://e-commerce-server-1-vca8.onrender.com/api/shop/cart/get/${userId}`
     );
-
     return response.data;
   }
 );
@@ -41,7 +40,6 @@ export const deleteCartItem = createAsyncThunk(
     const response = await axios.delete(
       `https://e-commerce-server-1-vca8.onrender.com/api/shop/cart/${userId}/${productId}`
     );
-
     return response.data;
   }
 );
@@ -51,16 +49,13 @@ export const updateCartQuantity = createAsyncThunk(
   async ({ userId, productId, quantity }) => {
     const response = await axios.put(
       "https://e-commerce-server-1-vca8.onrender.com/api/shop/cart/update-cart",
-      {
-        userId,
-        productId,
-        quantity,
-      }
+      { userId, productId, quantity }
     );
-
     return response.data;
   }
 );
+
+/* -------------------- SLICE -------------------- */
 
 const shoppingCartSlice = createSlice({
   name: "shoppingCart",
@@ -68,6 +63,8 @@ const shoppingCartSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+
+      /* ADD */
       .addCase(addToCart.pending, (state) => {
         state.isLoading = true;
       })
@@ -77,8 +74,9 @@ const shoppingCartSlice = createSlice({
       })
       .addCase(addToCart.rejected, (state) => {
         state.isLoading = false;
-        state.cartItems = [];
       })
+
+      /* FETCH */
       .addCase(fetchCartItems.pending, (state) => {
         state.isLoading = true;
       })
@@ -88,8 +86,9 @@ const shoppingCartSlice = createSlice({
       })
       .addCase(fetchCartItems.rejected, (state) => {
         state.isLoading = false;
-        state.cartItems = [];
       })
+
+      /* UPDATE QTY */
       .addCase(updateCartQuantity.pending, (state) => {
         state.isLoading = true;
       })
@@ -99,8 +98,9 @@ const shoppingCartSlice = createSlice({
       })
       .addCase(updateCartQuantity.rejected, (state) => {
         state.isLoading = false;
-        state.cartItems = [];
       })
+
+      /* DELETE */
       .addCase(deleteCartItem.pending, (state) => {
         state.isLoading = true;
       })
@@ -110,7 +110,6 @@ const shoppingCartSlice = createSlice({
       })
       .addCase(deleteCartItem.rejected, (state) => {
         state.isLoading = false;
-        state.cartItems = [];
       });
   },
 });

@@ -33,20 +33,40 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
     setRating(getRating);
   }
 
+ 
+  const [isAdded, setIsAdded] = useState(false);
   function handleAddToCart(productId, totalStock) {
     const existingCartItem = cartItems.items?.find(
       (item) => item.productId === productId
     );
+
     const currentQty = existingCartItem?.quantity || 0;
     const availableQty = totalStock - currentQty;
+
     if (availableQty <= 0) {
       toast({
-        title: `Out of Stock `,
+        title: "Out of stock",
         variant: "destructive",
       });
       return;
     }
 
+    // ✅ IF ITEM EXISTS → UPDATE QUANTITY
+    if (existingCartItem) {
+      dispatch(
+        updateCartQuantity({
+          productId,
+          quantity: currentQty + 1,
+        })
+      ).then(() => {
+        dispatch(fetchCartItems(user?.id));
+        setIsAdded(true);
+      });
+
+      return;
+    }
+
+    // ✅ ELSE → ADD NEW ITEM
     dispatch(
       addToCart({
         userId: user?.id,
@@ -59,6 +79,7 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
         toast({
           title: "Product added to cart",
         });
+        setIsAdded(true);
       }
     });
   }
@@ -156,18 +177,25 @@ function ProductDetailsDialog({ open, setOpen, productDetails }) {
           </div>
 
           <div className="mt-5 mb-5">
-            {availableQty <= 0 ? (
-              <Button className="w-full opacity-60 cursor-not-allowed" disabled>
-                Out of Stock
-              </Button>
-            ) : (
-              <Button
-                className="w-full"
-                onClick={() => handleAddToCart(productDetails?._id)}
-              >
-                Add to Cart
-              </Button>
-            )}
+            <Button
+              className={`w-full ${
+                availableQty <= 0
+                  ? "bg-red-600 text-white cursor-not-allowed opacity-60"
+                  : alreadyAddedQty > 0
+                  ? "bg-gray-600 text-white cursor-not-allowed"
+                  : "bg-primary text-white"
+              }`}
+              onClick={() =>
+                handleAddToCart(productDetails?._id, productDetails?.totalStock)
+              }
+              disabled={availableQty <= 0 || alreadyAddedQty > 0}
+            >
+              {availableQty <= 0
+                ? "Out of Stock"
+                : alreadyAddedQty > 0
+                ? "Added to Cart"
+                : "Add to Cart"}
+            </Button>
           </div>
 
           <h3

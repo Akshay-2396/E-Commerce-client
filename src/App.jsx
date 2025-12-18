@@ -30,6 +30,8 @@ import Wishlist from "./pages/shopping-view/wishlist";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import ScrollToTop from "./components/common/ScrollToTop";
+
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
     (state) => state.auth
@@ -44,6 +46,7 @@ function App() {
 
   return (
     <div className="flex flex-col overflow-hidden bg-white">
+<ScrollToTop />
       <Routes>
         <Route
           path="/"

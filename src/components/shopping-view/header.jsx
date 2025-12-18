@@ -31,6 +31,7 @@ import { useEffect, useState } from "react";
 import { fetchCartItems } from "@/store/shop/cart-slice";
 import { Label } from "../ui/label";
 
+/* ---------------- MENU ITEMS ---------------- */
 function MenuItems() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -38,13 +39,12 @@ function MenuItems() {
 
   function handleNavigate(getCurrentMenuItem) {
     sessionStorage.removeItem("filters");
+
     const currentFilter =
       getCurrentMenuItem.id !== "home" &&
       getCurrentMenuItem.id !== "products" &&
       getCurrentMenuItem.id !== "search"
-        ? {
-            category: [getCurrentMenuItem.id],
-          }
+        ? { category: [getCurrentMenuItem.id] }
         : null;
 
     sessionStorage.setItem("filters", JSON.stringify(currentFilter));
@@ -54,15 +54,18 @@ function MenuItems() {
           new URLSearchParams(`?category=${getCurrentMenuItem.id}`)
         )
       : navigate(getCurrentMenuItem.path);
+
+    // Scroll to top on navigation
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   return (
     <nav className="flex flex-col mb-3 lg:mb-0 lg:items-center gap-6 lg:flex-row">
       {shoppingViewHeaderMenuItems.map((menuItem) => (
         <Label
+          key={menuItem.id}
           onClick={() => handleNavigate(menuItem)}
           className="text-sm font-medium cursor-pointer"
-          key={menuItem.id}
         >
           {menuItem.label}
         </Label>
@@ -71,6 +74,7 @@ function MenuItems() {
   );
 }
 
+/* ---------------- RIGHT CONTENT ---------------- */
 function HeaderRightContent() {
   const { user } = useSelector((state) => state.auth);
   const { cartItems } = useSelector((state) => state.shopCart);
@@ -84,11 +88,11 @@ function HeaderRightContent() {
 
   useEffect(() => {
     dispatch(fetchCartItems(user?.id));
-  }, [dispatch]);
+  }, [dispatch, user?.id]);
 
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
-      {/* Wishlist Button */}
+      {/* Wishlist */}
       <Button
         variant="outline"
         size="icon"
@@ -96,11 +100,10 @@ function HeaderRightContent() {
         onClick={() => navigate("/shop/wishlist")}
       >
         <Heart className="w-6 h-6 text-red-500" />
-        <span className="sr-only">Wishlist</span>
       </Button>
 
-      {/* Cart Button */}
-      <Sheet open={openCartSheet} onOpenChange={() => setOpenCartSheet(false)}>
+      {/* Cart */}
+      <Sheet open={openCartSheet} onOpenChange={setOpenCartSheet}>
         <Button
           onClick={() => setOpenCartSheet(true)}
           variant="outline"
@@ -111,29 +114,27 @@ function HeaderRightContent() {
           <span className="absolute top-[-5px] right-[2px] font-bold text-sm">
             {cartItems?.items?.length || 0}
           </span>
-          <span className="sr-only">User cart</span>
         </Button>
+
         <UserCartWrapper
           setOpenCartSheet={setOpenCartSheet}
-          cartItems={
-            cartItems && cartItems.items && cartItems.items.length > 0
-              ? cartItems.items
-              : []
-          }
+          cartItems={cartItems?.items || []}
         />
       </Sheet>
 
-      {/* User Dropdown */}
+      {/* User */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Avatar className="bg-black">
+          <Avatar className="bg-black cursor-pointer">
             <AvatarFallback className="bg-black text-white font-extrabold">
               {user?.userName?.[0]?.toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="right" className="w-56">
-          <DropdownMenuLabel>Logged in as {user?.userName}</DropdownMenuLabel>
+          <DropdownMenuLabel>
+            Logged in as {user?.userName}
+          </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={() => navigate("/shop/account")}>
             <UserCog className="mr-2 h-4 w-4" />
@@ -150,22 +151,49 @@ function HeaderRightContent() {
   );
 }
 
+/* ---------------- HEADER ---------------- */
 function ShoppingHeader() {
   const { isAuthenticated } = useSelector((state) => state.auth);
 
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-background">
+    <header
+      className={`fixed top-0 left-0 z-50 w-full transition-all duration-300
+        ${
+          scrolled
+            ? "bg-white/50 backdrop-blur-md border-b shadow-sm text-black"
+            : "bg-transparent text-black"
+        }
+      `}
+    >
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
-        <Link to="/shop/home" className="flex items-center gap-2">
+        {/* Logo */}
+        <Link
+          to="/shop/home"
+          onClick={() =>
+            window.scrollTo({ top: 0, behavior: "smooth" })
+          }
+          className="flex items-center gap-2"
+        >
           <HousePlug className="h-6 w-6" />
           <span className="font-bold">E-commerce</span>
         </Link>
 
+        {/* Mobile */}
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon" className="lg:hidden">
               <Menu className="h-6 w-6" />
-              <span className="sr-only">Toggle header menu</span>
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-full max-w-xs">
@@ -174,10 +202,10 @@ function ShoppingHeader() {
           </SheetContent>
         </Sheet>
 
+        {/* Desktop */}
         <div className="hidden lg:block">
           <MenuItems />
         </div>
-
         <div className="hidden lg:block">
           <HeaderRightContent />
         </div>

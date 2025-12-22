@@ -8,106 +8,129 @@ import { Skeleton } from "../ui/skeleton";
 function ProductImageUpload({
   imageFile,
   setImageFile,
-  imageLoadingState,
   uploadedImageUrl,
   setUploadedImageUrl,
+  imageLoadingState,
   setImageLoadingState,
-  isEditMode,
-  isCustomStyling = false,
+  isEditMode = false,
+
+  // ✅ OPTIONAL — seller/admin form
+  formData,
+  setFormData,
 }) {
   const inputRef = useRef(null);
 
-  function handleImageFileChange(event) {
-    const selectedFile = event.target.files?.[0];
-    if (selectedFile) setImageFile(selectedFile);
+  /* ----------------------------- handlers ----------------------------- */
+
+  function handleImageFileChange(e) {
+    const file = e.target.files?.[0];
+    if (file) setImageFile(file);
   }
 
-  function handleDragOver(event) {
-    event.preventDefault();
+  function handleDragOver(e) {
+    e.preventDefault();
   }
 
-  function handleDrop(event) {
-    event.preventDefault();
-    const droppedFile = event.dataTransfer.files?.[0];
-    if (droppedFile) setImageFile(droppedFile);
+  function handleDrop(e) {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file) setImageFile(file);
   }
 
   function handleRemoveImage() {
     setImageFile(null);
     setUploadedImageUrl("");
-    if (inputRef.current) {
-      inputRef.current.value = "";
+
+    // ✅ update form only if provided
+    if (setFormData) {
+      setFormData((prev) => ({ ...prev, image: "" }));
     }
+
+    if (inputRef.current) inputRef.current.value = "";
   }
+
+  /* ------------------------ cloudinary upload ------------------------- */
 
   async function uploadImageToCloudinary() {
     setImageLoadingState(true);
-    const formData = new FormData();
-    formData.append("file", imageFile);
-    formData.append("upload_preset", "ecommerce");
+
+    const form = new FormData();
+    form.append("file", imageFile);
+    form.append("upload_preset", "ecommerce");
 
     try {
       const res = await fetch(
         "https://api.cloudinary.com/v1_1/dmfmcyqxg/image/upload",
         {
           method: "POST",
-          body: formData,
+          body: form,
         }
       );
 
       const data = await res.json();
 
-      if (data.secure_url) {
-        setUploadedImageUrl(data.secure_url);
-      } else {
-        console.error("❌ Cloudinary upload failed", data);
-        alert("Cloudinary upload failed.");
+      if (!data.secure_url) {
+        throw new Error("Cloudinary upload failed");
       }
-    } catch (error) {
-      console.error("❌ Upload error:", error);
+
+      setUploadedImageUrl(data.secure_url);
+
+      // ✅ sync with formData (edit + add)
+      if (setFormData) {
+        setFormData((prev) => ({
+          ...prev,
+          image: data.secure_url,
+        }));
+      }
+    } catch (err) {
+      console.error("Image upload error:", err);
       alert("Image upload failed. Try again.");
     } finally {
       setImageLoadingState(false);
     }
   }
 
+  /* ----------------------------- effects ------------------------------ */
+
   useEffect(() => {
-    if (imageFile) {
-      uploadImageToCloudinary();
-    }
+    if (imageFile) uploadImageToCloudinary();
   }, [imageFile]);
 
+  /* --------------------------- safe preview --------------------------- */
+
+  const previewImage =
+    formData?.image || uploadedImageUrl || "";
+
+  /* ------------------------------ render ------------------------------ */
+
   return (
-    <div className={`w-full mt-4 ${isCustomStyling ? "" : "max-w-md mx-auto"}`}>
-      <Label className="text-lg font-semibold mb-2 block">Upload Image</Label>
+    <div className="w-full mt-4 max-w-md mx-auto">
+      <Label className="text-lg font-semibold mb-2 block">
+        Upload Image
+      </Label>
+
       <div
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        className={`${
-          isEditMode ? "opacity-60" : ""
-        } border-2 border-dashed rounded-lg p-4`}
+        className="border-2 border-dashed rounded-lg p-4"
       >
         <Input
-          id="image-upload"
+          ref={inputRef}
           type="file"
           className="hidden"
-          ref={inputRef}
           onChange={handleImageFileChange}
-          disabled={isEditMode}
         />
 
         {!imageFile ? (
           <Label
-            htmlFor="image-upload"
-            className={`${
-              isEditMode ? "cursor-not-allowed" : ""
-            } flex flex-col items-center justify-center h-32 cursor-pointer`}
+            className="flex flex-col items-center justify-center h-32 cursor-pointer"
+            onClick={() => inputRef.current?.click()}
           >
             <UploadCloudIcon className="w-10 h-10 text-muted-foreground mb-2" />
             <span>Drag & drop or click to upload image</span>
           </Label>
         ) : imageLoadingState ? (
-          <Skeleton className="h-10 bg-gray-100" />
+          <Skeleton className="h-10" />
         ) : (
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -117,23 +140,19 @@ function ProductImageUpload({
             <Button
               variant="ghost"
               size="icon"
-              className="text-muted-foreground hover:text-foreground"
               onClick={handleRemoveImage}
             >
               <XIcon className="w-4 h-4" />
-              <span className="sr-only">Remove File</span>
             </Button>
           </div>
         )}
 
-        {uploadedImageUrl && !imageLoadingState && (
-          <div className="mt-4">
-            <img
-              src={uploadedImageUrl}
-              alt="Preview"
-              className="rounded-md max-h-40"
-            />
-          </div>
+        {previewImage && !imageLoadingState && (
+          <img
+            src={previewImage}
+            alt="Preview"
+            className="mt-4 rounded-md max-h-40"
+          />
         )}
       </div>
     </div>

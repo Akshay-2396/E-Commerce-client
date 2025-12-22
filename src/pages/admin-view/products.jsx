@@ -20,7 +20,7 @@ import { Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const initialFormData = {
-  image: null,
+  image: "",
   title: "",
   description: "",
   category: "",
@@ -44,115 +44,119 @@ function AdminProducts() {
   const dispatch = useDispatch();
   const { toast } = useToast();
   const email = sessionStorage.getItem("email");
+
+  function resetState() {
+    setFormData(initialFormData);
+    setOpenCreateProductsDialog(false);
+    setCurrentEditedId(null);
+    setImageFile(null);
+    setUploadedImageUrl("");
+    setImageLoadingState(false);
+  }
+
   function onSubmit(event) {
     event.preventDefault();
 
-    currentEditedId !== null
-      ? dispatch(
-          editProduct({
-            id: currentEditedId,
-            ...formData,
-            adminid: email,
-          })
-        ).then((data) => {
-          console.log(data, "edit");
+    const payload = {
+      ...formData,
+      adminid: email,
+    };
 
+    if (currentEditedId) {
+      dispatch(editProduct({ id: currentEditedId, ...payload })).then(
+        (data) => {
           if (data?.payload?.success) {
             dispatch(fetchAllProducts());
-            setFormData(initialFormData);
-            setOpenCreateProductsDialog(false);
-            setCurrentEditedId(null);
+            resetState();
+            toast({ title: "Product edited successfully" });
           }
-        })
-      : dispatch(
-          addNewProduct({
-            ...formData,
-            image: uploadedImageUrl,
-            adminid: email,
-          })
-        ).then((data) => {
-          if (data?.payload?.success) {
-            dispatch(fetchAllProducts());
-            setOpenCreateProductsDialog(false);
-            setImageFile(null);
-            setFormData(initialFormData);
-            toast({
-              title: "Product add successfully",
-            });
-          }
-        });
+        }
+      );
+    } else {
+      dispatch(addNewProduct(payload)).then((data) => {
+        if (data?.payload?.success) {
+          dispatch(fetchAllProducts());
+          resetState();
+          toast({ title: "Product added successfully" });
+        }
+      });
+    }
   }
 
-  function handleDelete(getCurrentProductId) {
-    dispatch(deleteProduct(getCurrentProductId)).then((data) => {
+  function handleDelete(id) {
+    dispatch(deleteProduct(id)).then((data) => {
       if (data?.payload?.success) {
         dispatch(fetchAllProducts());
+        toast({ title: "Product deleted" });
       }
     });
   }
 
   function isFormValid() {
     return Object.keys(formData)
-      .filter((currentKey) => currentKey !== "averageReview")
-      .map((key) => formData[key] !== "")
-      .every((item) => item);
+      .filter((k) => k !== "averageReview")
+      .every((k) => formData[k] !== "");
   }
 
   useEffect(() => {
     dispatch(fetchAllProducts());
   }, [dispatch]);
 
-  // console.log(formData, "productList");
+  // Sync image preview when editing
+  useEffect(() => {
+    if (currentEditedId) {
+      setUploadedImageUrl(formData.image);
+      setImageFile(null);
+    }
+  }, [currentEditedId, formData.image]);
 
   return (
     <Fragment>
-      <div className="mb-5 w-full flex justify-end">
+      <div className="mb-5 flex justify-end">
         <Button onClick={() => setOpenCreateProductsDialog(true)}>
           Add New Product
         </Button>
       </div>
+
       <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
-        {productList && productList.length > 0
-          ? productList.map((productItem) => (
-              <AdminProductTile
-                setFormData={setFormData}
-                setOpenCreateProductsDialog={setOpenCreateProductsDialog}
-                setCurrentEditedId={setCurrentEditedId}
-                product={productItem}
-                handleDelete={handleDelete}
-              />
-            ))
-          : null}
+        {productList?.map((product) => (
+          <AdminProductTile
+            key={product._id}
+            product={product}
+            setFormData={setFormData}
+            setOpenCreateProductsDialog={setOpenCreateProductsDialog}
+            setCurrentEditedId={setCurrentEditedId}
+            handleDelete={handleDelete}
+          />
+        ))}
       </div>
-      <Sheet
-        open={openCreateProductsDialog}
-        onOpenChange={() => {
-          setOpenCreateProductsDialog(false);
-          setCurrentEditedId(null);
-          setFormData(initialFormData);
-        }}
-      >
+
+      <Sheet open={openCreateProductsDialog} onOpenChange={resetState}>
         <SheetContent side="right" className="overflow-auto">
           <SheetHeader>
             <SheetTitle>
-              {currentEditedId !== null ? "Edit Product" : "Add New Product"}
+              {currentEditedId ? "Edit Product" : "Add New Product"}
             </SheetTitle>
           </SheetHeader>
+
           <ProductImageUpload
             imageFile={imageFile}
             setImageFile={setImageFile}
             uploadedImageUrl={uploadedImageUrl}
             setUploadedImageUrl={setUploadedImageUrl}
-            setImageLoadingState={setImageLoadingState}
             imageLoadingState={imageLoadingState}
-            isEditMode={currentEditedId !== null}
+            setImageLoadingState={setImageLoadingState}
+            isEditMode={!!currentEditedId}
+            formData={formData}
+            setFormData={setFormData}
           />
+
           <div className="py-6">
             <CommonForm
               onSubmit={onSubmit}
               formData={formData}
               setFormData={setFormData}
-              buttonText={currentEditedId !== null ? "Edit" : "Add"}
+              buttonText={currentEditedId ? "Edit" : "Add"}
               formControls={addProductFormElements}
               isBtnDisabled={!isFormValid()}
             />

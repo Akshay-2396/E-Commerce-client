@@ -35,9 +35,13 @@ export const fetchAllProducts = createAsyncThunk(
   }
 );
 
+// ===== Updated editProduct thunk: accept a payload that contains id + other fields.
+// We destructure id and send the rest as the request body.
 export const editProduct = createAsyncThunk(
   "/products/editProduct",
-  async ({ id, formData }) => {
+  async (payload) => {
+    // payload expected: { id: "...", title: "...", price: ..., image: "...", adminid: "..." }
+    const { id, ...formData } = payload;
     const result = await axios.put(
       `https://e-commerce-server-1-vca8.onrender.com/api/admin/products/edit/${id}`,
       formData,
@@ -79,6 +83,30 @@ const AdminProductsSlice = createSlice({
       .addCase(fetchAllProducts.rejected, (state, action) => {
         state.isLoading = false;
         state.productList = [];
+      });
+
+    // (optional) Add cases for add/edit/delete to update local state quickly if desired:
+    builder
+      .addCase(addNewProduct.fulfilled, (state, action) => {
+        // you can push new product to state.productList if backend returns created product
+        if (action.payload?.data) {
+          state.productList.unshift(action.payload.data);
+        }
+      })
+      .addCase(editProduct.fulfilled, (state, action) => {
+        if (action.payload?.data) {
+          const updated = action.payload.data;
+          const idx = state.productList.findIndex((p) => p._id === updated._id);
+          if (idx !== -1) state.productList[idx] = updated;
+        }
+      })
+      .addCase(deleteProduct.fulfilled, (state, action) => {
+        // optional: handle delete locally
+        if (action.meta?.arg) {
+          state.productList = state.productList.filter(
+            (p) => p._id !== action.meta.arg
+          );
+        }
       });
   },
 });
